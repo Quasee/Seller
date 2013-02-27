@@ -21,7 +21,9 @@ Seller.frame:SetScript("OnEvent",
       end
     end
 
-    print("Selling gray items for", GetCoinTextureString(sum));
+    if (sum ~= 0) then
+      print("Selling gray items for", GetCoinTextureString(sum));
+    end
   end
 );
 
