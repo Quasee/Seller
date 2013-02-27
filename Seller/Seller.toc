@@ -1,0 +1,7 @@
+## Interface: 50100
+## Title: Seller
+## Notes: Sells your gray items when you speak to a vendor.
+## Author: Akcent
+## Version: 1.0
+
+Seller.lua
