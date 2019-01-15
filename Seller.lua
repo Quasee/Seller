@@ -3,28 +3,35 @@ local Seller = Seller or {};
 Seller.frame = CreateFrame("Frame", "Seller", UIParent);
 Seller.frame:SetFrameStrata("BACKGROUND");
 
-Seller.frame:SetScript("OnEvent",
-  function (self, event, ...)
-    local sum = 0;
+function Seller:sellItem (bag, slot, item)
+  local price    = select(11, GetItemInfo(item));
+  local quantity, _, _, _, _, _, _, noValue = select(2, GetContainerItemInfo(bag, slot));
 
-    for bag = 0, 4 do
-      for slot = 1, GetContainerNumSlots(bag) do
-        local item = GetContainerItemID(bag, slot);
+  if (not noValue) then
+    UseContainerItem(bag, slot);
+  end
+  
+  return price * quantity;
+end
 
-        if (item and 0 == select(3, GetItemInfo(item))) then
-          local price    = select(11, GetItemInfo(item));
-          local quantity = select(2, GetContainerItemInfo(bag, slot));
+function Seller:sellAllGrays(event, ...)
+  local sum = 0;
 
-          sum = sum + price * quantity;
-          UseContainerItem(bag, slot);
-        end
+  for bag = 0, 4 do
+    for slot = 1, GetContainerNumSlots(bag) do
+      local item = GetContainerItemID(bag, slot);
+
+      if (item and 0 == select(3, GetItemInfo(item))) then
+        sum = sum + Seller:sellItem(bag, slot, item);
       end
     end
-
-    if (sum ~= 0) then
-      print("Selling gray items for", GetCoinTextureString(sum));
-    end
   end
-);
+
+  if (sum ~= 0) then
+    print("Selling gray items for", GetCoinTextureString(sum));
+  end
+end
+
+Seller.frame:SetScript("OnEvent", Seller.sellAllGrays);
 
 Seller.frame:RegisterEvent("MERCHANT_SHOW");
